@@ -144,6 +144,108 @@ const options = {
               format: 'date-time'
             }
           }
+        },
+        SellOrder: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'integer',
+              example: 1
+            },
+            season: {
+              type: 'string',
+              example: 'Season 3'
+            },
+            item_type: {
+              type: 'string',
+              example: 'EQUIPMENT'
+            },
+            category: {
+              type: 'string',
+              example: 'WEAPON'
+            },
+            sub_category: {
+              type: 'string',
+              example: 'SWORD'
+            },
+            rarity: {
+              type: 'string',
+              example: 'LEGENDARY'
+            },
+            grade: {
+              type: 'string',
+              example: 'SACRED'
+            },
+            greater_affixes: {
+              type: 'integer',
+              example: 2
+            },
+            affixes: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: {
+                    type: 'string',
+                    example: 'Critical Strike Damage'
+                  },
+                  value: {
+                    type: 'number',
+                    example: 45.5
+                  }
+                }
+              }
+            },
+            aspect_id: {
+              type: 'string',
+              example: 'RAIMENT_OF_THE_INFINITE'
+            },
+            aspect: {
+              type: 'array',
+              items: {
+                type: 'number'
+              },
+              example: [15, 20, 10]
+            },
+            seller_message: {
+              type: 'string',
+              example: 'Perfect rolls! Must see!'
+            },
+            price: {
+              type: 'number',
+              example: 5000000
+            },
+            bid_policy: {
+              type: 'string',
+              enum: ['FIXED', 'NEGOTIABLE', 'AUCTION'],
+              example: 'NEGOTIABLE'
+            },
+            seller_id: {
+              type: 'integer',
+              example: 1
+            },
+            seller_name: {
+              type: 'string',
+              example: 'John Doe'
+            },
+            seller_nickname: {
+              type: 'string',
+              example: 'player123'
+            },
+            status: {
+              type: 'string',
+              enum: ['ACTIVE', 'SOLD', 'CANCELLED', 'EXPIRED'],
+              example: 'ACTIVE'
+            },
+            created_at: {
+              type: 'string',
+              format: 'date-time'
+            },
+            updated_at: {
+              type: 'string',
+              format: 'date-time'
+            }
+          }
         }
       }
     }

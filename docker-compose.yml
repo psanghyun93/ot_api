@@ -15,6 +15,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql
       - ./db/init-season.sql:/docker-entrypoint-initdb.d/02-init-season.sql
+      - ./db/init-sell-order.sql:/docker-entrypoint-initdb.d/03-init-sell-order.sql
     networks:
       - app-network
     healthcheck:
