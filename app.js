@@ -14,6 +14,7 @@ var authRouter = require('./routes/auth');
 var usersRouter = require('./routes/users');
 var seasonsRouter = require('./routes/seasons');
 var sellOrdersRouter = require('./routes/sellOrders');
+var bidsRouter = require('./routes/bids');
 
 var app = express();
 
@@ -42,6 +43,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/seasons', seasonsRouter);
 app.use('/api/sell-orders', sellOrdersRouter);
+app.use('/api/bids', bidsRouter);
 
 // 404 handler
 app.use((req, res, next) => {

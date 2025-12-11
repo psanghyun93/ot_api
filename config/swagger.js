@@ -80,6 +80,10 @@ const options = {
               type: 'string',
               example: 'https://example.com/avatar.jpg'
             },
+            mana: {
+              type: 'integer',
+              example: 1000
+            },
             last_login: {
               type: 'string',
               format: 'date-time'
@@ -217,8 +221,9 @@ const options = {
             },
             bid_policy: {
               type: 'string',
-              enum: ['FIXED', 'NEGOTIABLE', 'AUCTION'],
-              example: 'NEGOTIABLE'
+              enum: ['FREE', 'FIXED', 'OFFER'],
+              example: 'OFFER',
+              description: 'FREE: 자유 제안, FIXED: 고정 가격, OFFER: 제안 받기'
             },
             seller_id: {
               type: 'integer',
@@ -234,8 +239,91 @@ const options = {
             },
             status: {
               type: 'string',
-              enum: ['ACTIVE', 'SOLD', 'CANCELLED', 'EXPIRED'],
-              example: 'ACTIVE'
+              enum: ['ON_SALE', 'IN_TRANSACTION', 'SOLD_OUT', 'EXPIRED', 'CANCELLED'],
+              example: 'ON_SALE',
+              description: 'ON_SALE: 판매중, IN_TRANSACTION: 거래중, SOLD_OUT: 판매완료, EXPIRED: 만료, CANCELLED: 취소'
+            },
+            highest_bid_price: {
+              type: 'number',
+              example: 4800000
+            },
+            bidder_count: {
+              type: 'integer',
+              example: 3
+            },
+            created_at: {
+              type: 'string',
+              format: 'date-time'
+            },
+            updated_at: {
+              type: 'string',
+              format: 'date-time'
+            }
+          }
+        },
+        Bid: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'integer',
+              example: 1
+            },
+            order_id: {
+              type: 'integer',
+              example: 1
+            },
+            seller_id: {
+              type: 'integer',
+              example: 1
+            },
+            seller_nickname: {
+              type: 'string',
+              example: 'seller123'
+            },
+            buyer_id: {
+              type: 'integer',
+              example: 2
+            },
+            buyer_nickname: {
+              type: 'string',
+              example: 'buyer123'
+            },
+            price: {
+              type: 'number',
+              example: 4500000
+            },
+            state: {
+              type: 'string',
+              enum: ['WAIT', 'ACCEPT', 'REJECT', 'CANCEL', 'COMPLETED'],
+              example: 'WAIT'
+            },
+            season: {
+              type: 'string',
+              example: 'Season 3'
+            },
+            item_type: {
+              type: 'string',
+              example: 'EQUIPMENT'
+            },
+            category: {
+              type: 'string',
+              example: 'WEAPON'
+            },
+            rarity: {
+              type: 'string',
+              example: 'LEGENDARY'
+            },
+            order_price: {
+              type: 'number',
+              example: 5000000
+            },
+            seller_name: {
+              type: 'string',
+              example: 'John Doe'
+            },
+            buyer_name: {
+              type: 'string',
+              example: 'Jane Smith'
             },
             created_at: {
               type: 'string',

@@ -11,9 +11,13 @@ CREATE TABLE IF NOT EXISTS users (
     blizzard_token_expires_at TIMESTAMP,
     avatar_url TEXT,
     is_registration_complete BOOLEAN DEFAULT FALSE,
+    mana INTEGER DEFAULT 1000,
     last_login TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    -- Constraint for mana
+    CONSTRAINT valid_mana CHECK (mana >= 0)
 );
 
 -- Create index on email for faster lookups

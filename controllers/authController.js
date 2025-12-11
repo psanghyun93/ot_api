@@ -203,5 +203,37 @@ class AuthController {
     }
   }
 
+  /**
+   * 로그인 후 체크인
+   *
+   * 체크인을 위해 호출되는 라우터
+   * 체크인은 UTC 00:00:00~23:59:59 사이에만 한번만 가능하다.
+   *
+   * 1. 어제까지 이틀동안의 체크인 기록을 조회한다.
+   * 2. 어제 체크인을 했는지 확인한다.
+   * 3. 어제 체크인을 했다면 오늘 체크인을 할 수 있는지 확인한다.
+   * 4. 어제 체크인 정보가 있고 오늘 체크인을 할 수 있다면 연속 체크인 날짜를 증가시킨다.
+   * 5. 어제 체크인 정보가 없다면 연속 체크인 날짜를 1로 초기화한다.
+   * 6. 체크인 날짜를 기록한다.
+   * 7. 체크인 성공 시 200 응답을 반환한다.
+   * 8. 체크인 실패 시 400 응답을 반환한다.
+   * 9. 체크인에 성공하면 마나를 증가시킨다.
+   * @param req
+   * @param res
+   * @returns {Promise<void>}
+   */
+  async checkin(req, res) {
+    try {
+      const userId = req.user.id;
+      const user = await User.findById(userId);
+      if (!user) {
+        return errorResponse(res, 'User not found', 404);
+      }
+
+    } catch (error) {
+      console.error('Error checking user:', error);
+    }
+  }
+
 }
 module.exports = new AuthController();

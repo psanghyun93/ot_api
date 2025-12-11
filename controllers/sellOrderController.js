@@ -2,8 +2,8 @@ const { successResponse, errorResponse } = require('../utils/response');
 const SellOrder = require('../models/SellOrder');
 
 // Valid values
-const VALID_STATUSES = ['ACTIVE', 'SOLD', 'CANCELLED', 'EXPIRED'];
-const VALID_BID_POLICIES = ['FIXED', 'NEGOTIABLE', 'AUCTION'];
+const VALID_STATUSES = ['ON_SALE', 'IN_TRANSACTION', 'SOLD_OUT', 'EXPIRED', 'CANCELLED'];
+const VALID_BID_POLICIES = ['FREE', 'FIXED', 'OFFER'];
 
 class SellOrderController {
   /**
@@ -215,8 +215,8 @@ class SellOrderController {
         return errorResponse(res, 'You can only cancel your own orders', 403);
       }
 
-      if (existingOrder.status !== 'ACTIVE') {
-        return errorResponse(res, 'Only active orders can be cancelled', 400);
+      if (existingOrder.status !== 'ON_SALE') {
+        return errorResponse(res, 'Only orders on sale can be cancelled', 400);
       }
 
       const updatedOrder = await SellOrder.updateStatus(orderId, 'CANCELLED');

@@ -31,7 +31,7 @@ var { authenticate } = require('../middleware/auth');
  *         name: status
  *         schema:
  *           type: string
- *           enum: [ACTIVE, SOLD, CANCELLED, EXPIRED]
+ *           enum: [ON_SALE, IN_TRANSACTION, SOLD_OUT, EXPIRED, CANCELLED]
  *       - in: query
  *         name: min_price
  *         schema:
@@ -206,7 +206,8 @@ router.get('/:id', sellOrderController.getOrderById.bind(sellOrderController));
  *                 example: 5000000
  *               bid_policy:
  *                 type: string
- *                 enum: [FIXED, NEGOTIABLE, AUCTION]
+ *                 enum: [FREE, FIXED, OFFER]
+ *                 description: FREE (자유 제안), FIXED (고정 가격), OFFER (제안 받기)
  *     responses:
  *       201:
  *         description: Sell order created successfully
@@ -242,10 +243,10 @@ router.post('/', authenticate, sellOrderController.createOrder.bind(sellOrderCon
  *                 type: string
  *               status:
  *                 type: string
- *                 enum: [ACTIVE, SOLD, CANCELLED, EXPIRED]
+ *                 enum: [ON_SALE, IN_TRANSACTION, SOLD_OUT, EXPIRED, CANCELLED]
  *               bid_policy:
  *                 type: string
- *                 enum: [FIXED, NEGOTIABLE, AUCTION]
+ *                 enum: [FREE, FIXED, OFFER]
  *     responses:
  *       200:
  *         description: Sell order updated successfully

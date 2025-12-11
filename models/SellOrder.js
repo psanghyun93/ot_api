@@ -87,11 +87,11 @@ class SellOrder {
   }
 
   /**
-   * Get active sell orders
+   * Get active sell orders (ON_SALE status)
    * @returns {Promise<Array>}
    */
   static async findActive(filters = {}) {
-    return this.findAll({ ...filters, status: 'ACTIVE' });
+    return this.findAll({ ...filters, status: 'ON_SALE' });
   }
 
   /**
@@ -231,6 +231,72 @@ class SellOrder {
   }
 
   /**
+    * Update highest bid price and bidder count
+    * @param {number} id - Order ID
+    * @param {number} bidPrice - Bid price
+    * @param {boolean} isNewBidder - Whether this is a new bidder
+    * @returns {Promise<Object|null>}
+    */
+   static async updateBidInfo(id, bidPrice, isNewBidder) {
+     let query;
+     if (isNewBidder) {
+       query = `
+         UPDATE sell_orders
+         SET highest_bid_price = GREATEST(highest_bid_price, $1),
+             bidder_count = bidder_count + 1
+         WHERE id = $2
+         RETURNING *
+       `;
+     } else {
+       query = `
+         UPDATE sell_orders
+         SET highest_bid_price = GREATEST(highest_bid_price, $1)
+         WHERE id = $2
+         RETURNING *
+       `;
+     }
+     const result = await db.query(query, [bidPrice, id]);
+     return result.rows[0] || null;
+   }
+
+   /**
+    * Validate bid price according to bid policy
+    * @param {Object} order - Order object
+    * @param {number} bidPrice - Bid price
+    * @returns {Object} Validation result {valid: boolean, message: string}
+    */
+   static validateBidPrice(order, bidPrice) {
+     switch (order.bid_policy) {
+       case 'FREE':
+         // 자유 제안 - 모든 가격 허용
+         return { valid: true };
+
+       case 'FIXED':
+         // 고정 가격 - 정확히 일치해야 함
+         if (bidPrice !== parseFloat(order.price)) {
+           return {
+             valid: false,
+             message: `Fixed price is ${order.price}. You must bid exactly this amount.`
+           };
+         }
+         return { valid: true };
+
+       case 'OFFER':
+         // 제안 받기 - 판매 가격 이상이어야 함
+         if (bidPrice < parseFloat(order.price)) {
+           return {
+             valid: false,
+             message: `Bid price must be at least ${order.price}.`
+           };
+         }
+         return { valid: true };
+
+       default:
+         return { valid: false, message: 'Invalid bid policy' };
+     }
+   }
+
+   /**
    * Get sell order statistics
    * @returns {Promise<Object>}
    */

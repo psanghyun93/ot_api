@@ -23,7 +23,7 @@ class User {
   static async findById(id) {
     const query = `
         SELECT id, name, nickname, email, blizzard_id, blizzard_battletag, avatar_url,
-               is_registration_complete, last_login, created_at, updated_at
+               is_registration_complete, mana, last_login, created_at, updated_at
         FROM users
         WHERE id = $1
     `;
@@ -263,6 +263,51 @@ class User {
   }
 
   /**
+    * Decrease user's mana
+    * @param {number} id - User ID
+    * @param {number} amount - Amount to decrease
+    * @returns {Promise<Object|null>}
+    */
+   static async decreaseMana(id, amount) {
+     const query = `
+       UPDATE users
+       SET mana = mana - $1
+       WHERE id = $2 AND mana >= $1
+       RETURNING id, mana
+     `;
+     const result = await db.query(query, [amount, id]);
+     return result.rows[0] || null;
+   }
+
+   /**
+    * Increase user's mana
+    * @param {number} id - User ID
+    * @param {number} amount - Amount to increase
+    * @returns {Promise<Object|null>}
+    */
+   static async increaseMana(id, amount) {
+     const query = `
+       UPDATE users
+       SET mana = mana + $1
+       WHERE id = $2
+       RETURNING id, mana
+     `;
+     const result = await db.query(query, [amount, id]);
+     return result.rows[0] || null;
+   }
+
+   /**
+    * Get user's mana
+    * @param {number} id - User ID
+    * @returns {Promise<number>}
+    */
+   static async getMana(id) {
+     const query = 'SELECT mana FROM users WHERE id = $1';
+     const result = await db.query(query, [id]);
+     return result.rows[0] ? result.rows[0].mana : 0;
+   }
+
+   /**
    * Check if email exists
    * @param {string} email - User email
    * @param {number} excludeId - User ID to exclude from check (for updates)
