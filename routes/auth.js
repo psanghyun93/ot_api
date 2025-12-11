@@ -7,7 +7,7 @@ const { authenticate } = require('../middleware/auth');
  * @swagger
  * tags:
  *   name: Authentication
- *   description: Authentication and authorization endpoints
+ *   description: 인증 & 인가 앤드포인트
  */
 
 /**

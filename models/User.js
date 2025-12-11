@@ -121,12 +121,6 @@ class User {
   }
 
   /**
-   * Update a user
-   * @param {number} id - User ID
-   * @param {Object} userData - User data to update
-   * @returns {Promise<Object|null>}
-   */
-  /**
    * Complete user registration with additional info
    * @param {number} id - User ID
    * @param {Object} userData - Additional user data
@@ -150,6 +144,12 @@ class User {
     return result.rows[0];
   }
 
+  /**
+   * Update a user
+   * @param {number} id - User ID
+   * @param {Object} userData - User data to update
+   * @returns {Promise<Object|null>}
+   */
   static async update(id, userData) {
     const { name, nickname, email, avatarUrl } = userData;
     const fields = [];

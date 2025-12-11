@@ -93,6 +93,57 @@ const options = {
               format: 'date-time'
             }
           }
+        },
+        Season: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'integer',
+              example: 1
+            },
+            name: {
+              type: 'object',
+              properties: {
+                ko: {
+                  type: 'string',
+                  example: '시즌 1'
+                },
+                zh: {
+                  type: 'string',
+                  example: '赛季 1'
+                },
+                ja: {
+                  type: 'string',
+                  example: 'シーズン 1'
+                },
+                en: {
+                  type: 'string',
+                  example: 'Season 1'
+                }
+              }
+            },
+            start_time: {
+              type: 'string',
+              format: 'date-time'
+            },
+            end_time: {
+              type: 'string',
+              format: 'date-time'
+            },
+            state: {
+              type: 'string',
+              enum: ['ETERNAL', 'WAITING', 'ONGOING', 'ENDED'],
+              example: 'ONGOING'
+            },
+            created_at: {
+              type: 'string',
+              format: 'date-time'
+            },
+            updated_at: {
+              type: 'string',
+              format: 'date-time'
+            }
+          }
         }
       }
     }

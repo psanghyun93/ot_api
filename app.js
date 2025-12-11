@@ -12,6 +12,7 @@ var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
 var authRouter = require('./routes/auth');
 var usersRouter = require('./routes/users');
+var seasonsRouter = require('./routes/seasons');
 
 var app = express();
 
@@ -38,6 +39,7 @@ app.use('/api', indexRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/seasons', seasonsRouter);
 
 // 404 handler
 app.use((req, res, next) => {

@@ -1,7 +1,7 @@
-var express = require('express');
-var router = express.Router();
-var userController = require('../controllers/userController');
-var { authenticate } = require('../middleware/auth');
+const express = require('express');
+const router = express.Router();
+const userController = require('../controllers/userController');
+const { authenticate } = require('../middleware/auth');
 
 /**
  * @swagger
