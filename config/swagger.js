@@ -4,12 +4,12 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'AI Test API',
+      title: 'API',
       version: '1.0.0',
-      description: 'API documentation for Onlytems',
+      description: 'Onlytems API 문서',
       contact: {
         name: 'API Support',
-        email: 'support@example.com'
+        email: 'sanghyunpark@kakao.com'
       }
     },
     servers: [

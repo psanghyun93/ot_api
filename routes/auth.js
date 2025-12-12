@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 const { authenticate } = require('../middleware/auth');
+const {registrationCompleted} = require("../middleware/user");
 
 /**
  * @swagger
@@ -160,7 +161,7 @@ router.post('/refresh', authController.refreshToken.bind(authController));
  *       404:
  *         description: User not found
  */
-router.get('/me', authenticate, authController.getMe.bind(authController));
+router.get('/me', authenticate, registrationCompleted, authController.getMe.bind(authController));
 
 /**
  * @swagger

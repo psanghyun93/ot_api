@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const { authenticate } = require('../middleware/auth');
+const {registrationCompleted} = require("../middleware/user");
 
 /**
  * @swagger
@@ -255,7 +256,7 @@ router.delete('/:id', authenticate, userController.deleteUser.bind(userControlle
 
 /**
  * @swagger
- * /api/users/{id}:
+ * /api/users/checkin:
  *   put:
  *     summary: 출석 기록 생성(체크인)
  *     description: 출석을 기록하고, 유저 등급 또는 연속 출석일수에 따라 Mana를 지급합니다
@@ -271,7 +272,7 @@ router.delete('/:id', authenticate, userController.deleteUser.bind(userControlle
  *         description: User ID
  *     responses:
  *       200:
- *         description: User checkin successfully
+ *         description: 체크인 성공
  *         content:
  *           application/json:
  *             schema:
@@ -282,9 +283,15 @@ router.delete('/:id', authenticate, userController.deleteUser.bind(userControlle
  *                 data:
  *                   type: object
  *                   properties:
- *                     message:
+ *                     id:
  *                       type: string
- *                       example: User checkin successfully
+ *                       example: "user_abc123"
+ *       201:
+ *         description: 첫 체크인 성공 시
+ *       409:
+ *         description: 이미 체크인 했을경우
+ *       411:
+ *         description: 연속 로그인 실패
  *       400:
  *         description: Invalid input
  *       401:
@@ -294,6 +301,6 @@ router.delete('/:id', authenticate, userController.deleteUser.bind(userControlle
  *       500:
  *         description: Server error
  */
-router.put('/checkin', authenticate, registrationCompleted, userController.checkin.bind(userController));
+router.put('/checkin', authenticate, userController.checkin.bind(userController));
 
 module.exports = router;

@@ -7,12 +7,12 @@ var { authenticate } = require('../middleware/auth');
  * @swagger
  * /api/seasons:
  *   get:
- *     summary: Get all seasons
- *     description: Retrieve a list of all seasons
+ *     summary: 모든 시즌 조회
+ *     description: 모든 시즌 목록을 조회합니다
  *     tags: [Seasons]
  *     responses:
  *       200:
- *         description: List of seasons
+ *         description: 시즌 목록 반환
  *         content:
  *           application/json:
  *             schema:
@@ -31,12 +31,12 @@ router.get('/', seasonController.getAllSeasons.bind(seasonController));
  * @swagger
  * /api/seasons/active:
  *   get:
- *     summary: Get active seasons
- *     description: Retrieve all active seasons (ONGOING or ETERNAL)
+ *     summary: 활성 시즌 조회
+ *     description: 활성화된 시즌(ONGOING 또는 ETERNAL)을 조회합니다
  *     tags: [Seasons]
  *     responses:
  *       200:
- *         description: List of active seasons
+ *         description: 활성 시즌 목록 반환
  */
 router.get('/active', seasonController.getActiveSeasons.bind(seasonController));
 
@@ -44,12 +44,12 @@ router.get('/active', seasonController.getActiveSeasons.bind(seasonController));
  * @swagger
  * /api/seasons/stats:
  *   get:
- *     summary: Get season statistics
- *     description: Get statistics about seasons
+ *     summary: 시즌 통계 조회
+ *     description: 시즌 통계를 조회합니다
  *     tags: [Seasons]
  *     responses:
  *       200:
- *         description: Season statistics
+ *         description: 시즌 통계 반환
  */
 router.get('/stats', seasonController.getSeasonStats.bind(seasonController));
 
@@ -57,8 +57,8 @@ router.get('/stats', seasonController.getSeasonStats.bind(seasonController));
  * @swagger
  * /api/seasons/state/{state}:
  *   get:
- *     summary: Get seasons by state
- *     description: Retrieve seasons filtered by state
+ *     summary: 상태별 시즌 조회
+ *     description: 지정된 상태로 필터링된 시즌 목록을 조회합니다
  *     tags: [Seasons]
  *     parameters:
  *       - in: path
@@ -69,7 +69,7 @@ router.get('/stats', seasonController.getSeasonStats.bind(seasonController));
  *           enum: [ETERNAL, WAITING, ONGOING, ENDED]
  *     responses:
  *       200:
- *         description: List of seasons with the specified state
+ *         description: 해당 상태의 시즌 목록 반환
  */
 router.get('/state/:state', seasonController.getSeasonsByState.bind(seasonController));
 
@@ -77,8 +77,8 @@ router.get('/state/:state', seasonController.getSeasonsByState.bind(seasonContro
  * @swagger
  * /api/seasons/{id}:
  *   get:
- *     summary: Get season by ID
- *     description: Retrieve a single season by ID
+ *     summary: ID로 시즌 조회
+ *     description: ID로 특정 시즌을 조회합니다
  *     tags: [Seasons]
  *     parameters:
  *       - in: path
@@ -88,9 +88,9 @@ router.get('/state/:state', seasonController.getSeasonsByState.bind(seasonContro
  *           type: integer
  *     responses:
  *       200:
- *         description: Season found
+ *         description: 시즌 조회 성공
  *       404:
- *         description: Season not found
+ *         description: 시즌을 찾을 수 없음
  */
 router.get('/:id', seasonController.getSeasonById.bind(seasonController));
 
@@ -98,8 +98,8 @@ router.get('/:id', seasonController.getSeasonById.bind(seasonController));
  * @swagger
  * /api/seasons:
  *   post:
- *     summary: Create a new season
- *     description: Create a new season (requires authentication)
+ *     summary: 새 시즌 생성
+ *     description: 새로운 시즌을 생성합니다 (인증 필요)
  *     tags: [Seasons]
  *     security:
  *       - bearerAuth: []
@@ -136,7 +136,7 @@ router.get('/:id', seasonController.getSeasonById.bind(seasonController));
  *                 enum: [ETERNAL, WAITING, ONGOING, ENDED]
  *     responses:
  *       201:
- *         description: Season created successfully
+ *         description: 시즌 생성 성공
  */
 router.post('/', authenticate, seasonController.createSeason.bind(seasonController));
 
@@ -144,8 +144,8 @@ router.post('/', authenticate, seasonController.createSeason.bind(seasonControll
  * @swagger
  * /api/seasons/{id}:
  *   put:
- *     summary: Update a season
- *     description: Update an existing season (requires authentication)
+ *     summary: 시즌 수정
+ *     description: 기존 시즌을 수정합니다 (인증 필요)
  *     tags: [Seasons]
  *     security:
  *       - bearerAuth: []
@@ -174,7 +174,7 @@ router.post('/', authenticate, seasonController.createSeason.bind(seasonControll
  *                 enum: [ETERNAL, WAITING, ONGOING, ENDED]
  *     responses:
  *       200:
- *         description: Season updated successfully
+ *         description: 시즌 수정 성공
  */
 router.put('/:id', authenticate, seasonController.updateSeason.bind(seasonController));
 
@@ -182,8 +182,8 @@ router.put('/:id', authenticate, seasonController.updateSeason.bind(seasonContro
  * @swagger
  * /api/seasons/{id}:
  *   delete:
- *     summary: Delete a season
- *     description: Delete a season (requires authentication)
+ *     summary: 시즌 삭제
+ *     description: 시즌을 삭제합니다 (인증 필요)
  *     tags: [Seasons]
  *     security:
  *       - bearerAuth: []
@@ -195,7 +195,7 @@ router.put('/:id', authenticate, seasonController.updateSeason.bind(seasonContro
  *           type: integer
  *     responses:
  *       200:
- *         description: Season deleted successfully
+ *         description: 시즌 삭제 성공
  */
 router.delete('/:id', authenticate, seasonController.deleteSeason.bind(seasonController));
 

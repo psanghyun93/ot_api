@@ -296,7 +296,10 @@ class UserController {
    * 4. 어제 체크인 정보가 있고 오늘 체크인을 할 수 있다면 연속 체크인 날짜를 증가시킨다.
    * 5. 어제 체크인 정보가 없다면 연속 체크인 날짜를 1로 초기화한다.
    * 6. 체크인 날짜를 기록한다.
-   * 7. 체크인 성공 시 200 응답을 반환한다.
+   * 7. 첫 체크인 성공 시 201 응답을 반환한다.
+   * 7_1. 이미 체크인했다면, 409 응답을 반환한다.
+   * 7_2. 연속 체크인에 실패하면, 411 응답을 반환한다.
+   * 7_3. 체크인 성공하면, 200 응답과 id 와 mana를 반환한다.
    * 8. 체크인 실패 시 400 응답을 반환한다.
    * 9. 체크인에 성공하면 마나를 증가시킨다.
    * @param req
@@ -309,10 +312,21 @@ class UserController {
       const checkin = await CheckIn.findByUserId(userId);
 
       const checkinDate = dayjs(checkin.date)
-      const isOneday = dayjs().diff(checkinDate, 'days') > 1;
+      // 최초 로그인인경우
+      if(dayjs(checkin.created_at).diff(dayjs(), 'days') === 0) {
+        return successResponse(res, checkin, 201);
+      }
+
+      // 이미 기록된 경우
+      if(checkinDate.diff(dayjs(), 'days') === 0) {
+        return errorResponse(res, 'Already checked in!', 409);
+      }
+
+      const isOneday = dayjs().diff(checkinDate, 'days') === 1;
+      // 연속 체크인 실패시
       if(!isOneday) {
         const result = await CheckIn.reset(userId);
-        return successResponse(result, "Reset User checkin record");
+        return successResponse(res, 'Resetting consecutive login failure record.', 422);
       }
 
       checkin.date= dayjs().toDate();
@@ -332,9 +346,9 @@ class UserController {
 
         // 체크인 성공시 마나 제공
         const manaResult = await User.increaseMana(userId, checkinReward);
-        return successResponse(manaResult, "Record User checkin");
+        return successResponse(res, manaResult);
       } catch (err) {
-        return errorResponse("Error while recording checkin", err);
+        return errorResponse(res, "Error while recording checkin");
       }
 
     } catch (error) {

@@ -1,3 +1,4 @@
+const db = require('../config/database');
 
 const registrationCompleted = async(req, res, next) => {
   const reqUser = req.user || {};
