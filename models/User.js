@@ -129,20 +129,20 @@ class User {
    * @returns {Promise<Object>} Updated user
    */
   static async completeRegistration(id, userData) {
-    const { name, nickname, email } = userData;
+    const { name:nickname, email } = userData;
 
     const query = `
       UPDATE users 
-      SET name = $1,
-          nickname = $2, 
-          email = $3,
+      SET 
+          nickname = $1, 
+          email = $2,
           is_registration_complete = TRUE,
           updated_at = CURRENT_TIMESTAMP
-      WHERE id = $4
+      WHERE id = $3
       RETURNING id, name, nickname, email, blizzard_battletag, avatar_url, is_registration_complete, created_at, updated_at
     `;
 
-    const result = await db.query(query, [name, nickname, email, id]);
+    const result = await db.query(query, [nickname, email, id]);
     return result.rows[0];
   }
 
