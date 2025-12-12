@@ -294,6 +294,6 @@ router.delete('/:id', authenticate, userController.deleteUser.bind(userControlle
  *       500:
  *         description: Server error
  */
-router.put('/checkin', authenticate, userController.checkin.bind(userController));
+router.put('/checkin', authenticate, registrationCompleted, userController.checkin.bind(userController));
 
 module.exports = router;

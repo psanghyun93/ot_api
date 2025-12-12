@@ -57,5 +57,6 @@ const optionalAuthenticate = (req, res, next) => {
 
 module.exports = {
   authenticate,
+
   optionalAuthenticate
 };

@@ -358,6 +358,8 @@ class User {
     const result = await db.query(query, [id]);
     return result.rows.length > 0;
   }
+
+
 }
 
 module.exports = User;
