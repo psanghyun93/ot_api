@@ -7,6 +7,14 @@ const registrationCompleted = async(req, res, next) => {
   if(result.rows.length === 0){
     throw new Error(`No such user id ${reqUser.id} found.`);
   }
-  const user = result.rows[0];
-  return user.is_registration_complete;
+
+  if(!result.rows[0].is_registration_complete) {
+    throw new Error(`Unknown user. ${reqUser.id}`);
+  }
+
+  next();
 }
+
+module.exports = {
+  registrationCompleted,
+};
