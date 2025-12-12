@@ -7,8 +7,8 @@ const { authenticate } = require('../middleware/auth');
  * @swagger
  * /api/users:
  *   get:
- *     summary: Get all users
- *     description: Retrieve a list of all users from database
+ *     summary: 모든 사용자 조회
+ *     description: 데이터베이스에서 모든 사용자 목록을 가져옵니다
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -41,8 +41,8 @@ router.get('/', authenticate, userController.getAllUsers.bind(userController));
  * @swagger
  * /api/users/check-nickname/{nickname}:
  *   get:
- *     summary: Check nickname availability
- *     description: Check if a nickname is available for registration
+ *     summary: 닉네임 사용 가능 여부 확인
+ *     description: 등록 가능한 닉네임인지 확인합니다
  *     tags: [Users]
  *     parameters:
  *       - in: path
@@ -79,8 +79,8 @@ router.get('/check-nickname/:nickname', userController.checkNickname.bind(userCo
  * @swagger
  * /api/users/me/profile:
  *   get:
- *     summary: Get my profile
- *     description: Get current authenticated user's profile
+ *     summary: 내 프로필을 조회합니다
+ *     description: 현재 인증된 사용자의 프로필을 조회합니다
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -98,8 +98,8 @@ router.get('/me/profile', authenticate, userController.getMyProfile.bind(userCon
  * @swagger
  * /api/users/me/profile:
  *   put:
- *     summary: Update my profile
- *     description: Update current authenticated user's profile
+ *     summary: 내 프로필을 업데이트합니다
+ *     description: 현재 인증된 사용자의 프로필을 업데이트합니다
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -125,8 +125,8 @@ router.put('/me/profile', authenticate, userController.updateMyProfile.bind(user
  * @swagger
  * /api/users/me/complete-registration:
  *   post:
- *     summary: Complete user registration
- *     description: Submit additional information to complete registration process
+ *     summary: 사용자 등록을 완료합니다
+ *     description: 등록 절차를 완료하기 위해 추가 정보를 제출합니다
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -162,8 +162,8 @@ router.post('/me/complete-registration', authenticate, userController.completeRe
  * @swagger
  * /api/users:
  *   post:
- *     summary: Create a new user
- *     description: Create a new user with the provided information in database (Admin only)
+ *     summary: 새로운 사용자를 생성합니다
+ *     description: 제공된 정보를 사용하여 데이터베이스에 새로운 사용자를 생성합니다 (관리자 전용)
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -214,8 +214,8 @@ router.post('/', authenticate, userController.createUser.bind(userController));
  * @swagger
  * /api/users/{id}:
  *   delete:
- *     summary: Delete a user
- *     description: Delete a user by their ID from database (Admin only)
+ *     summary: 사용자를 삭제합니다
+ *     description: 관리자 권한으로 사용자 ID를 통해 데이터베이스에서 사용자를 삭제합니다
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -252,5 +252,48 @@ router.post('/', authenticate, userController.createUser.bind(userController));
  *         description: Server error
  */
 router.delete('/:id', authenticate, userController.deleteUser.bind(userController));
+
+/**
+ * @swagger
+ * /api/users/{id}:
+ *   put:
+ *     summary: 출석 기록 생성(체크인)
+ *     description: 출석을 기록하고, 유저 등급 또는 연속 출석일수에 따라 Mana를 지급합니다
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: User ID
+ *     responses:
+ *       200:
+ *         description: User checkin successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     message:
+ *                       type: string
+ *                       example: User checkin successfully
+ *       400:
+ *         description: Invalid input
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+router.put('/checkin', authenticate, userController.checkin.bind(userController));
 
 module.exports = router;

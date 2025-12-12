@@ -1,4 +1,6 @@
 const db = require('../config/database');
+const {CONST_USER_RANK} = require("./constants/UserConstant");
+const {MAX_MANA} = require("../config/appPolicy");
 
 class User {
   /**
@@ -286,6 +288,19 @@ class User {
     * @returns {Promise<Object|null>}
     */
    static async increaseMana(id, amount) {
+     // 체그인 사용자의 등급별로 최대 마나량과 비교하여 충천
+     // 본인이 가질수 있는 마나보다 많다면 최대값으로 조정
+     const user = await this.findById(id);
+     if(MAX_MANA[user.rank] < user.mana + amount) {
+       const result = await db.query(`
+           UPDATE users
+           SET mana = $1
+           WHERE id = $2
+           RETURNING id, mana
+       `, [MAX_MANA[user.rank], id])
+       return result.rows[0] || null;
+     }
+
      const query = `
        UPDATE users
        SET mana = mana + $1

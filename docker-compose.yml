@@ -17,6 +17,7 @@ services:
       - ./db/init-season.sql:/docker-entrypoint-initdb.d/02-init-season.sql
       - ./db/init-sell-order.sql:/docker-entrypoint-initdb.d/03-init-sell-order.sql
       - ./db/init-bid.sql:/docker-entrypoint-initdb.d/04-init-bid.sql
+      - ./db/init-checkin.sql:/docker-entrypoint-initdb.d/05-init-checkin.sql
     networks:
       - app-network
     healthcheck:

@@ -1,5 +1,8 @@
 const { successResponse, errorResponse } = require('../utils/response');
 const User = require('../models/User');
+const CheckIn = require("../models/CheckIn");
+const dayjs = require("dayjs");
+const {MANA_REWARD} = require("../config/appPolicy");
 
 
 class UserController {
@@ -10,7 +13,7 @@ class UserController {
   async getAllUsers(req, res) {
     try {
       const users = await User.findAll();
-      successResponse(res, users);
+      successResponse(res, req.user);
     } catch (error) {
       console.error('Error fetching users:', error);
       errorResponse(res, 'Failed to fetch users', 500);
@@ -277,6 +280,65 @@ class UserController {
     } catch (error) {
       console.error('Error updating profile:', error);
       errorResponse(res, 'Failed to update profile', 500);
+    }
+  }
+
+
+  /**
+   * 로그인 후 체크인
+   *
+   * 체크인을 위해 호출되는 라우터
+   * 체크인은 UTC 00:00:00~23:59:59 사이에만 한번만 가능하다.
+   * todo
+   * 1. 어제까지 이틀동안의 체크인 기록을 조회한다.
+   * 2. 어제 체크인을 했는지 확인한다.
+   * 3. 어제 체크인을 했다면 오늘 체크인을 할 수 있는지 확인한다.
+   * 4. 어제 체크인 정보가 있고 오늘 체크인을 할 수 있다면 연속 체크인 날짜를 증가시킨다.
+   * 5. 어제 체크인 정보가 없다면 연속 체크인 날짜를 1로 초기화한다.
+   * 6. 체크인 날짜를 기록한다.
+   * 7. 체크인 성공 시 200 응답을 반환한다.
+   * 8. 체크인 실패 시 400 응답을 반환한다.
+   * 9. 체크인에 성공하면 마나를 증가시킨다.
+   * @param req
+   * @param res
+   * @returns {Promise<void>}
+   */
+  async checkin(req, res) {
+    try {
+      const userId = req.user.id;
+      const checkin = await CheckIn.findByUserId(userId);
+
+      const checkinDate = dayjs(checkin.date)
+      const isOneday = dayjs().diff(checkinDate, 'days') > 1;
+      if(!isOneday) {
+        const result = await CheckIn.reset(userId);
+        return successResponse(result, "Reset User checkin record");
+      }
+
+      checkin.date= dayjs().toDate();
+      checkin.streak+=1;
+
+      // 연속 로그인일자에 따라 리워드 지급
+      let checkinReward= MANA_REWARD.DEFAULT;
+      switch (checkin.streak) {
+        case 7: checkinReward=MANA_REWARD.D7; break;
+        case 30: checkinReward=MANA_REWARD.D30; break;
+      }
+
+      try {
+        // 체크인 기록
+        const checkinResult = await CheckIn.record(userId, checkin);
+        if (!checkinResult) return errorResponse(checkinResult, "Check-in failed", 400);
+
+        // 체크인 성공시 마나 제공
+        const manaResult = await User.increaseMana(userId, checkinReward);
+        return successResponse(manaResult, "Record User checkin");
+      } catch (err) {
+        return errorResponse("Error while recording checkin", err);
+      }
+
+    } catch (error) {
+      console.error('Error checking user:', error, 500);
     }
   }
 }

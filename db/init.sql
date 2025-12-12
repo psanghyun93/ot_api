@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
     avatar_url TEXT,
     is_registration_complete BOOLEAN DEFAULT FALSE,
     mana INTEGER DEFAULT 1000,
+    rank VARCHAR(100) DEFAULT 'BRONZE',
     last_login TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
