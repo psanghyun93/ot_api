@@ -9,7 +9,7 @@ const registrationCompleted = async(req, res, next) => {
     throw new Error(`No such user id ${reqUser.id} found.`);
   }
 
-  if(!result.rows[0].is_registration_complete) {
+  if(!result.rows[0]['is_registration_complete']) {
     throw new Error(`Unknown user. ${reqUser.id}`);
   }
 

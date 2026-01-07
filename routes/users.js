@@ -263,13 +263,6 @@ router.delete('/:id', authenticate, userController.deleteUser.bind(userControlle
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: User ID
  *     responses:
  *       200:
  *         description: 체크인 성공
@@ -301,6 +294,6 @@ router.delete('/:id', authenticate, userController.deleteUser.bind(userControlle
  *       500:
  *         description: Server error
  */
-router.put('/checkin', authenticate, userController.checkin.bind(userController));
+router.put('/checkin', authenticate, registrationCompleted, userController.checkin.bind(userController));
 
 module.exports = router;
