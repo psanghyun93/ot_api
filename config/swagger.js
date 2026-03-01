@@ -4,22 +4,22 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'API',
+      title: 'OnlyItems API',
       version: '1.0.0',
-      description: 'Onlytems API 문서',
+      description: '블리자드 게임 아이템 거래 및 입찰 플랫폼 API',
       contact: {
-        name: 'API Support',
-        email: 'sanghyunpark@kakao.com'
+        name: 'API 지원',
+        email: 'support@onlyitems.com'
       }
     },
     servers: [
       {
         url: 'http://localhost:3000',
-        description: 'Development server'
+        description: '개발 서버'
       },
       {
-        url: 'http://localhost:3000',
-        description: 'Production server'
+        url: 'http://api.onlyitems.com',
+        description: '프로덕션 서버'
       }
     ],
     components: {
@@ -28,7 +28,7 @@ const options = {
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT',
-          description: 'Enter your JWT token'
+          description: 'JWT 토큰을 입력하세요'
         }
       },
       schemas: {
