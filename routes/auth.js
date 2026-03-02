@@ -7,20 +7,20 @@ const {registrationCompleted} = require("../middleware/user");
 /**
  * @swagger
  * tags:
- *   name: Authentication
- *   description: 인증 & 인가 앤드포인트
+ *   name: 인증
+ *   description: 인증 및 권한 관련 엔드포인트
  */
 
 /**
  * @swagger
  * /api/auth/blizzard:
  *   get:
- *     summary: Initiate Blizzard OAuth login
- *     description: Get Blizzard OAuth authorization URL to redirect user
- *     tags: [Authentication]
+ *     summary: Blizzard OAuth 로그인 시작
+ *     description: Blizzard OAuth 인증 URL을 생성합니다. 서버는 `APP_BASE_URL` 환경 변수 또는 요청 호스트 값을 기준으로 리디렉트 URI를 설정합니다.
+ *     tags: [인증]
  *     responses:
  *       200:
- *         description: Authorization URL generated
+ *         description: 인증 URL 생성 성공
  *         content:
  *           application/json:
  *             schema:
@@ -33,7 +33,7 @@ const {registrationCompleted} = require("../middleware/user");
  *                   properties:
  *                     authUrl:
  *                       type: string
- *                       example: https://oauth.battle.net/oauth/authorize?...
+ *                       example: https://oauth.battle.net/oauth/authorize?client_id=...&redirect_uri=...
  *                     state:
  *                       type: string
  */
@@ -43,24 +43,24 @@ router.get('/blizzard', authController.blizzardLogin.bind(authController));
  * @swagger
  * /api/auth/blizzard/callback:
  *   get:
- *     summary: Blizzard OAuth callback
- *     description: Handle Blizzard OAuth callback and authenticate user
- *     tags: [Authentication]
+ *     summary: Blizzard OAuth 콜백
+ *     description: Blizzard에서 발급한 인증코드를 받아 토큰 교환 및 사용자 인증을 수행합니다
+ *     tags: [인증]
  *     parameters:
  *       - in: query
  *         name: code
  *         required: true
  *         schema:
  *           type: string
- *         description: Authorization code from Blizzard
+ *         description: Blizzard에서 발급한 인증 코드
  *       - in: query
  *         name: state
  *         schema:
  *           type: string
- *         description: State parameter for CSRF protection
+ *         description: CSRF 보호를 위한 상태 파라미터
  *     responses:
  *       200:
- *         description: Authentication successful
+ *         description: 인증 성공
  *         content:
  *           application/json:
  *             schema:
@@ -85,9 +85,9 @@ router.get('/blizzard', authController.blizzardLogin.bind(authController));
  *                         expiresIn:
  *                           type: string
  *       400:
- *         description: Invalid request
+ *         description: 잘못된 요청
  *       500:
- *         description: Authentication failed
+ *         description: 인증 처리 실패
  */
 router.get('/blizzard/callback', authController.blizzardCallback.bind(authController));
 
@@ -95,9 +95,9 @@ router.get('/blizzard/callback', authController.blizzardCallback.bind(authContro
  * @swagger
  * /api/auth/refresh:
  *   post:
- *     summary: Refresh access token
- *     description: Get a new access token using refresh token
- *     tags: [Authentication]
+ *     summary: 액세스 토큰 갱신
+ *     description: 리프레시 토큰으로 새로운 액세스 토큰을 발급합니다
+ *     tags: [인증]
  *     requestBody:
  *       required: true
  *       content:
@@ -129,9 +129,9 @@ router.get('/blizzard/callback', authController.blizzardCallback.bind(authContro
  *                     expiresIn:
  *                       type: string
  *       400:
- *         description: Refresh token required
+ *         description: 리프레시 토큰 필수
  *       401:
- *         description: Invalid or expired refresh token
+ *         description: 유효하지 않거나 만료된 리프레시 토큰
  */
 router.post('/refresh', authController.refreshToken.bind(authController));
 
@@ -139,14 +139,14 @@ router.post('/refresh', authController.refreshToken.bind(authController));
  * @swagger
  * /api/auth/me:
  *   get:
- *     summary: Get current user
- *     description: Get current authenticated user information
- *     tags: [Authentication]
+ *     summary: 현재 로그인 사용자 조회
+ *     description: 인증된 사용자의 정보를 반환합니다
+ *     tags: [인증]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: User information retrieved
+ *         description: 사용자 정보 조회 성공
  *         content:
  *           application/json:
  *             schema:
@@ -157,9 +157,9 @@ router.post('/refresh', authController.refreshToken.bind(authController));
  *                 data:
  *                   $ref: '#/components/schemas/User'
  *       401:
- *         description: Unauthorized
+ *         description: 인증 필요
  *       404:
- *         description: User not found
+ *         description: 사용자 없음
  */
 router.get('/me', authenticate, registrationCompleted, authController.getMe.bind(authController));
 
@@ -167,16 +167,16 @@ router.get('/me', authenticate, registrationCompleted, authController.getMe.bind
  * @swagger
  * /api/auth/logout:
  *   post:
- *     summary: Logout
- *     description: Logout current user
- *     tags: [Authentication]
+ *     summary: 로그아웃
+ *     description: 현재 로그인된 사용자를 로그아웃합니다
+ *     tags: [인증]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Logged out successfully
+ *         description: 로그아웃 성공
  *       401:
- *         description: Unauthorized
+ *         description: 인증 필요
  */
 router.post('/logout', authenticate, authController.logout.bind(authController));
 

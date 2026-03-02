@@ -1,5 +1,6 @@
 const { successResponse, errorResponse } = require('../utils/response');
 const { generateAccessToken, generateRefreshToken } = require('../utils/jwt');
+const crypto = require('crypto');
 const blizzardOAuth = require('../services/blizzardOAuth');
 const User = require('../models/User');
 const CheckIn = require("../models/CheckIn");
@@ -11,8 +12,18 @@ class AuthController {
    */
   async blizzardLogin(req, res) {
     try {
-      const state = Math.random().toString(36).substring(7);
-      const authUrl = blizzardOAuth.getAuthorizationUrl(state);
+      const state = crypto.randomBytes(16).toString('hex');
+      // determine base URL - prefer explicit APP_BASE_URL env var for external access
+      const protocol = req.protocol;
+      const host = req.get('host');
+      
+      // 외부 접속을 위해 APP_BASE_URL이 없으면 공인 IP 사용 (포트가 3000이라고 가정)
+      // host가 localhost인 경우에도 외부 IP로 강제 변환하여 리다이렉트 문제 해결
+      const serverIp = '211.184.27.184';
+      const baseUrl = process.env.APP_BASE_URL || `${protocol}://${host.includes('localhost') ? `${serverIp}:3000` : host}`;
+      const redirectUri = `${baseUrl}/api/auth/blizzard/callback`;
+
+      const authUrl = blizzardOAuth.getAuthorizationUrl(state, redirectUri);
 
       successResponse(res, {
         authUrl,
@@ -36,8 +47,15 @@ class AuthController {
         return errorResponse(res, 'Authorization code is required', 400);
       }
 
-      // Exchange code for access token
-      const tokenData = await blizzardOAuth.getAccessToken(code);
+      // Exchange code for access token (must use the same redirect URI as used above)
+      const protocol = req.protocol;
+      const host = req.get('host');
+      
+      const serverIp = '211.184.27.184';
+      const baseUrl = process.env.APP_BASE_URL || `${protocol}://${host.includes('localhost') ? `${serverIp}:3000` : host}`;
+      const redirectUri = `${baseUrl}/api/auth/blizzard/callback`;
+
+      const tokenData = await blizzardOAuth.getAccessToken(code, redirectUri);
       const { access_token, refresh_token, expires_in } = tokenData;
 
       // Get user info from Blizzard
@@ -80,23 +98,10 @@ class AuthController {
       const accessTokenJwt = generateAccessToken(payload);
       const refreshTokenJwt = generateRefreshToken(payload);
 
-      successResponse(res, {
-        message: user.created_at === user.updated_at ? 'User registered successfully' : 'Login successful',
-        user: {
-          id: user.id,
-          name: user.name,
-          nickname: user.nickname,
-          email: user.email,
-          blizzardBattletag: user.blizzard_battletag,
-          avatarUrl: user.avatar_url,
-          isRegistrationComplete: user.is_registration_complete
-        },
-        tokens: {
-          accessToken: accessTokenJwt,
-          refreshToken: refreshTokenJwt,
-          expiresIn: process.env.JWT_EXPIRES_IN || '7d'
-        }
-      });
+      // 프론트엔드 페이지로 리다이렉트 (토큰과 상태 전달)
+      // FRONTEND_URL이 설정되어 있지 않으면 API 서버 주소를 기본값으로 사용
+      const targetBaseUrl = process.env.FRONTEND_URL || baseUrl;
+      res.redirect(`${targetBaseUrl}/login/callback?accessToken=${accessTokenJwt}&refreshToken=${refreshTokenJwt}&isRegistrationComplete=${user.is_registration_complete}`);
     } catch (error) {
       console.error('Error in Blizzard callback:', error);
       errorResponse(res, error.message || 'Failed to authenticate with Blizzard', 500);

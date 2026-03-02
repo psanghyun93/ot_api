@@ -32,10 +32,17 @@ class BlizzardOAuthService {
    * @param {string} state - Optional state parameter
    * @returns {string} Authorization URL
    */
-  getAuthorizationUrl(state = '') {
+  /**
+   * Get authorization URL for OAuth flow
+   * @param {string} state - Optional state parameter
+   * @param {string|null} redirectUri - Optional redirect URI override
+   * @returns {string} Authorization URL
+   */
+  getAuthorizationUrl(state = '', redirectUri = null) {
+    const uri = redirectUri || BLIZZARD_REDIRECT_URI;
     const params = new URLSearchParams({
       client_id: BLIZZARD_CLIENT_ID,
-      redirect_uri: BLIZZARD_REDIRECT_URI,
+      redirect_uri: uri,
       response_type: 'code',
       scope: 'openid',
       ...(state && { state })
@@ -49,15 +56,21 @@ class BlizzardOAuthService {
    * @param {string} code - Authorization code
    * @returns {Promise<Object>} Token response
    */
-  async getAccessToken(code) {
+  /**
+   * Exchange authorization code for access token
+   * @param {string} code - Authorization code
+   * @param {string|null} redirectUri - Redirect URI used in auth request
+   * @returns {Promise<Object>} Token response
+   */
+  async getAccessToken(code, redirectUri = null) {
     try {
+      const uri = redirectUri || BLIZZARD_REDIRECT_URI;
       const response = await axios.post(
-        // `${OAUTH_BASE_URL}/oauth/token`,
         `${OAUTH_BASE_URL}/token`,
         new URLSearchParams({
           grant_type: 'authorization_code',
           code: code,
-          redirect_uri: BLIZZARD_REDIRECT_URI
+          redirect_uri: uri
         }),
         {
           auth: {

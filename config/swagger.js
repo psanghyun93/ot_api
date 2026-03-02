@@ -18,6 +18,10 @@ const options = {
         description: '개발 서버'
       },
       {
+        url: 'http://211.184.27.184:3000',
+        description: '외부 접속 서버'
+      },
+      {
         url: 'http://api.onlyitems.com',
         description: '프로덕션 서버'
       }
